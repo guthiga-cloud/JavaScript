@@ -1,0 +1,13 @@
+﻿{
+  "name": "javascript-utilities",
+  "version": "1.0.0",
+  "description": "8 JavaScript utility programs with different functionalities",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "demo": "node demo.js"
+  },
+  "keywords": ["javascript", "utilities", "calculator", "todo", "authentication"],
+  "author": "Your Name",
+  "license": "MIT"
+}
