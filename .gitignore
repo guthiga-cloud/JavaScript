@@ -1,0 +1,38 @@
+﻿# JavaScript Utility Suite
+
+## 📦 8 Powerful JavaScript Utilities
+
+A comprehensive collection of JavaScript modules for various programming tasks.
+
+## 🛠️ Utilities Included
+
+| # | Module | Description |
+|---|--------|-------------|
+| 1 | **Calculator** | Arithmetic operations |
+| 2 | **Todo List** | Task management system |
+| 3 | **String Manipulator** | String processing utilities |
+| 4 | **Array Utils** | Array manipulation functions |
+| 5 | **Weather API** | Weather data simulation |
+| 6 | **User Auth** | Authentication system |
+| 7 | **File Processor** | File operations |
+| 8 | **Data Analyzer** | Statistical analysis |
+
+## 🚀 Quick Start
+
+### Run the demo
+```bash
+node demo.js
+const Calculator = require('./calculator');
+const calc = new Calculator();
+console.log(calc.add(10, 20)); // 30
+
+```powershell
+# Create .gitignore
+@'
+node_modules/
+package-lock.json
+.env
+test_data/
+data/
+.DS_Store
+*.log
