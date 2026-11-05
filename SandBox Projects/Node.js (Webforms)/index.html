@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Message Form</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="form-container">
+        <form id="contactForm">
+            <div class="form-group">
+                <input type="text" id="name" name="name" placeholder="Your Name" required>
+            </div>
+            <div class="form-group">
+                <input type="email" id="email" name="email" placeholder="Your Email" required>
+            </div>
+            <div class="form-group">
+                <input type="text" id="subject" name="subject" placeholder="Subject">
+            </div>
+            <div class="form-group">
+                <textarea id="message" name="message" placeholder="Your Message" required></textarea>
+            </div>
+            
+            <button type="submit" class="submit-btn" id="submitBtn">
+                <span id="btnText">Send Message</span>
+                <svg class="send-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                </svg>
+            </button>
+
+            <div id="statusMessage" class="status-message"></div>
+        </form>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

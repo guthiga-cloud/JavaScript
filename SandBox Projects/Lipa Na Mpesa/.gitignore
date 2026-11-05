@@ -1,0 +1,12 @@
+# Private credentials
+.env
+.env.*
+
+# Allow safe example configuration
+!.env.example
+
+# Dependencies
+node_modules/
+
+# Logs
+*.log
