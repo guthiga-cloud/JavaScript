@@ -156,6 +156,7 @@
       let previousValue = null; // stored left-hand value
       let operator = null;      // pending operator
       let justEvaluated = false;
+      let enteredCurrentInput = false;
 
       const OP_MAP = { "+": "+", "−": "-", "×": "*", "÷": "/" };
 
@@ -179,6 +180,7 @@
           justEvaluated = false;
         }
         currentInput = currentInput === "0" ? d : currentInput + d;
+        enteredCurrentInput = true;
         render();
       }
 
@@ -189,6 +191,7 @@
         }
         if (!currentInput.includes(".")) {
           currentInput += ".";
+          enteredCurrentInput = true;
           render();
         }
       }
@@ -198,12 +201,13 @@
         previousValue = null;
         operator = null;
         justEvaluated = false;
+        enteredCurrentInput = false;
         render();
         renderHistory();
       }
 
       function toggleSign() {
-        if (currentInput === "0") return;
+        if (currentInput === "0" || currentInput === "Error") return;
         currentInput = currentInput.startsWith("-")
           ? currentInput.slice(1)
           : "-" + currentInput;
@@ -212,21 +216,28 @@
 
       function percent() {
         const v = parseFloat(currentInput);
-        if (!isNaN(v)) {
+        if (Number.isFinite(v)) {
           currentInput = String(v / 100);
+          enteredCurrentInput = true;
           render();
         }
       }
 
       function setOperator(op) {
         if (operator !== null && previousValue !== null) {
-          // chain: evaluate first
+          if (!enteredCurrentInput) {
+            operator = op;
+            renderHistory();
+            return;
+          }
           evaluate();
         }
         previousValue = parseFloat(currentInput);
+        if (!Number.isFinite(previousValue)) return;
         operator = op;
         justEvaluated = false;
         currentInput = "0";
+        enteredCurrentInput = false;
         renderHistory();
         render();
       }
@@ -236,43 +247,50 @@
 
         const a = previousValue;
         const b = parseFloat(currentInput);
-        if (isNaN(b)) return;
+        if (!Number.isFinite(a) || !Number.isFinite(b)) return;
 
         const op = OP_MAP[operator];
         let result;
-        try {
-          switch (op) {
-            case "+": result = a + b; break;
-            case "-": result = a - b; break;
-            case "*": result = a * b; break;
-            case "/":
-              if (b === 0) {
-                currentInput = "Error";
-                operator = null;
-                previousValue = null;
-                justEvaluated = true;
-                render();
-                historyEl.textContent = "";
-                return;
-              }
-              result = a / b;
-              break;
-            default: return;
-          }
-        } catch (e) {
+        switch (op) {
+          case "+": result = a + b; break;
+          case "-": result = a - b; break;
+          case "*": result = a * b; break;
+          case "/":
+            if (b === 0) {
+              currentInput = "Error";
+              operator = null;
+              previousValue = null;
+              justEvaluated = true;
+              enteredCurrentInput = false;
+              render();
+              historyEl.textContent = "";
+              return;
+            }
+            result = a / b;
+            break;
+          default: return;
+        }
+
+        if (!Number.isFinite(result)) {
           currentInput = "Error";
+          operator = null;
+          previousValue = null;
+          justEvaluated = true;
+          enteredCurrentInput = false;
           render();
+          historyEl.textContent = "";
           return;
         }
 
-        // round to avoid float artifacts (0.1 + 0.2 = 0.30000000000004)
-        result = Math.round(result * 1e10) / 1e10;
+        // Round to 12 significant digits to avoid floating-point artifacts.
+        result = Number(result.toPrecision(12));
 
         historyEl.textContent = `${a} ${operator} ${b} =`;
         currentInput = String(result);
         operator = null;
         previousValue = null;
         justEvaluated = true;
+        enteredCurrentInput = false;
         render();
       }
 
@@ -312,9 +330,11 @@
         else if (k === "Enter" || k === "=") { e.preventDefault(); evaluate(); }
         else if (k === "Escape") clearAll();
         else if (k === "Backspace") {
-          currentInput = currentInput.length > 1
+          currentInput = currentInput !== "Error" && currentInput.length > 1
             ? currentInput.slice(0, -1)
             : "0";
+          justEvaluated = false;
+          enteredCurrentInput = currentInput !== "0";
           render();
         }
       });

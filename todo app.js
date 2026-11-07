@@ -226,8 +226,19 @@
           const raw = localStorage.getItem(STORAGE_KEY);
           if (!raw) return [];
           const parsed = JSON.parse(raw);
-          return Array.isArray(parsed) ? parsed : [];
-        } catch {
+          if (!Array.isArray(parsed)) {
+            console.warn("Saved tasks are not in the expected format.");
+            return [];
+          }
+          return parsed.filter(task =>
+            task &&
+            typeof task.id === "string" &&
+            typeof task.text === "string" &&
+            task.text.trim() !== "" &&
+            typeof task.done === "boolean"
+          );
+        } catch (e) {
+          console.warn("Could not load saved tasks:", e);
           return [];
         }
       }
